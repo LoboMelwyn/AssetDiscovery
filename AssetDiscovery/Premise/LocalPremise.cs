@@ -23,8 +23,16 @@ namespace AssetDiscovery.Premise
         private uint telnetport = 23;
         private bool iscomplete = false;
         private List<MachineInfo> serversfound = new List<MachineInfo>();
+        private List<Scripts> scrlst = new List<Scripts>();
 
 
+        public List<Scripts> ScriptList
+        {
+            set
+            {
+                scrlst = value;
+            }
+        }
         public string Name => "LOCAL";
         public bool IsComplete => iscomplete;
         public PremiseType Premise => PremiseType.LOCAL;
@@ -114,11 +122,14 @@ namespace AssetDiscovery.Premise
             bool iswinrm = false;
             bool istelnet = false;
 
-            MachineInfo minfo = new MachineInfo();
-            minfo.IPAddress = ipaddress;
-            minfo.OpenedPorts = new System.Collections.Generic.Dictionary<string, uint>();
-            minfo.Hostname = string.Empty;
-            minfo.OSVersion = string.Empty;
+            MachineInfo minfo = new MachineInfo()
+            {
+                IPAddress = ipaddress,
+                OpenedPorts = new Dictionary<string, uint>(),
+                ScriptOutput = new Dictionary<string, string>(),
+                Hostname = string.Empty,
+                OSVersion = string.Empty
+            };
 
             using (Ping p = new Ping())
             {
@@ -175,6 +186,14 @@ namespace AssetDiscovery.Premise
                 {
                     minfo.Hostname = winrmconn.GetHostname();
                     minfo.OSVersion = winrmconn.GetOSVersion();
+                    foreach (Scripts scr in scrlst)
+                    {
+                        if (scr.Script == ScriptType.POWERSHELL)
+                        {
+                            string result = winrmconn.RunCommand(scr.ScriptText);
+                            minfo.ScriptOutput.Add(scr.ScriptName, result);
+                        }
+                    }
                 }
                 #endregion
             }
@@ -190,6 +209,14 @@ namespace AssetDiscovery.Premise
                 {
                     minfo.OSType = "UNIX";
                     minfo.OSVersion = sshconn.GetOSVersion();
+                    foreach (Scripts scr in scrlst)
+                    {
+                        if (scr.Script == ScriptType.BASH)
+                        {
+                            string result = winrmconn.RunCommand(scr.ScriptText);
+                            minfo.ScriptOutput.Add(scr.ScriptName, result);
+                        }
+                    }
                 }
             }
             else if (istelnet)

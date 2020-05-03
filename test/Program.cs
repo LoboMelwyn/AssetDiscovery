@@ -61,6 +61,22 @@ namespace test
             };
             #endregion
 
+            List<Scripts> scrlst = new List<Scripts>();
+            scrlst.Add(
+                new Scripts(){
+                    Script = ScriptType.POWERSHELL,
+                    ScriptName = "IISVersion",
+                    ScriptText = "(Get-ItemProperty -Path HKLM:\\SOFTWARE\\Microsoft\\InetStp).versionString"
+                }
+            );
+            scrlst.Add(
+                new Scripts(){
+                    Script = ScriptType.BASH,
+                    ScriptName = "PERLVERSION",
+                    ScriptText = "perl --version | head -n 2"
+                }
+            );
+
             LocalPremise localPremise = new LocalPremise();
             localPremise.WindowsCredentials = mcwin;
             localPremise.UNIXCredentials = mcunix;
@@ -81,6 +97,10 @@ namespace test
                 if (!string.IsNullOrEmpty(mi.Hostname))
                     Console.WriteLine("Hostname: " + mi.Hostname);
                 foreach (KeyValuePair<string, uint> entry in mi.OpenedPorts)
+                {
+                    Console.WriteLine(entry.Key + " : " + entry.Value);
+                }
+                foreach (KeyValuePair<string, string> entry in mi.ScriptOutput)
                 {
                     Console.WriteLine(entry.Key + " : " + entry.Value);
                 }

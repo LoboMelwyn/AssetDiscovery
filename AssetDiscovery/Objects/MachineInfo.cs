@@ -11,6 +11,7 @@ namespace AssetDiscovery
         public string OSVersion { get; set; }
         public bool IsPingable { get; set; }
         public Dictionary<string, uint> OpenedPorts { get; set; }
+        public Dictionary<string, string> ScriptOutput { get; set; }
     }
 
     public delegate void MachineInfoOutput(MachineInfo minfo);
