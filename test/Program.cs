@@ -73,14 +73,17 @@ namespace test
                 new Scripts(){
                     Script = ScriptType.BASH,
                     ScriptName = "PERLVERSION",
-                    ScriptText = "perl --version | head -n 2"
+                    ScriptText = "perl --version"
                 }
             );
 
-            LocalPremise localPremise = new LocalPremise();
-            localPremise.WindowsCredentials = mcwin;
-            localPremise.UNIXCredentials = mcunix;
-            localPremise.NetworkDeviceCredentials = mcnwdev;
+            LocalPremise localPremise = new LocalPremise
+            {
+                WindowsCredentials = mcwin,
+                UNIXCredentials = mcunix,
+                NetworkDeviceCredentials = mcnwdev,
+                ScriptList = scrlst
+            };
             localPremise.Scan("10.10.5.40/29");
             while (!localPremise.IsComplete)
             {
@@ -93,9 +96,9 @@ namespace test
                 Console.WriteLine("ispingable: " + mi.IsPingable);
                 Console.WriteLine("OSType: " + mi.OSType);
                 if (!string.IsNullOrEmpty(mi.OSVersion))
-                    Console.WriteLine("OSVersion: " + mi.OSVersion);
+                    Console.WriteLine("OSVersion: " + mi.OSVersion.Trim());
                 if (!string.IsNullOrEmpty(mi.Hostname))
-                    Console.WriteLine("Hostname: " + mi.Hostname);
+                    Console.WriteLine("Hostname: " + mi.Hostname.Trim());
                 foreach (KeyValuePair<string, uint> entry in mi.OpenedPorts)
                 {
                     Console.WriteLine(entry.Key + " : " + entry.Value);

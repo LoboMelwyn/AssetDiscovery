@@ -13,6 +13,7 @@ namespace AssetDiscovery.Communicators
         private UNIXCredentials unixcred;
         private SshClient sshclient;
         public string Name => "SSH";
+        ConnectionInfo conn = null;
 
         public uint Port
         {
@@ -40,8 +41,8 @@ namespace AssetDiscovery.Communicators
         public string GetHostname()
         {
             string ret = string.Empty;
-            string password = new System.Net.NetworkCredential(string.Empty, unixcred.Password).Password;
-            ConnectionInfo conn = new ConnectionInfo(ip.ToString(), unixcred.Username,
+            string password = new NetworkCredential(string.Empty, unixcred.Password).Password;
+            conn = new ConnectionInfo(ip.ToString(), unixcred.Username,
                 new AuthenticationMethod[]{
                         new PasswordAuthenticationMethod(unixcred.Username,password)
                 }
@@ -99,7 +100,7 @@ namespace AssetDiscovery.Communicators
 
         public bool IsConnectSuccessfull()
         {
-            bool isssh=false;
+            bool isssh = false;
             using (TcpClient tcpClient = new TcpClient())
             {
                 try
@@ -120,6 +121,11 @@ namespace AssetDiscovery.Communicators
             string ret = string.Empty;
             try
             {
+                if (!sshclient.IsConnected)
+                {
+                    sshclient = new SshClient(conn);
+                    sshclient.Connect();
+                }
                 using (var cmd = sshclient.CreateCommand(command))
                 {
                     cmd.Execute();
@@ -132,6 +138,7 @@ namespace AssetDiscovery.Communicators
                         }
                     }
                 }
+                // sshclient.Disconnect();
             }
             catch (Exception ex)
             {

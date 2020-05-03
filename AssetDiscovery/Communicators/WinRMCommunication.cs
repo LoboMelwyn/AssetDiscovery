@@ -179,7 +179,14 @@ namespace AssetDiscovery.Communicators
             }
             foreach (PSObject r in results)
             {
-                result += r.ToString();
+                try
+                {
+                    result += r.ToString();
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex);
+                }
             }
             return result;
         }

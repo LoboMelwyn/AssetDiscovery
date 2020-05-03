@@ -148,6 +148,10 @@ namespace AssetDiscovery.Premise
                 TargetCredentials = uNIXCredentials
             };
             isssh = sshconn.IsConnectSuccessfull();
+            if (isssh)
+            {
+                minfo.OpenedPorts.Add("SSH", sshport);
+            }
             // third try RDP
             ICommunication rdpconn = new RDPCommunication()
             {
@@ -156,6 +160,10 @@ namespace AssetDiscovery.Premise
                 TargetCredentials = windowsCredentials
             };
             isrdp = rdpconn.IsConnectSuccessfull();
+            if (isrdp)
+            {
+                minfo.OpenedPorts.Add("RDP", rdpport);
+            }
             // fourth try WINRM
             ICommunication winrmconn = new WinRMCommunication()
             {
@@ -166,6 +174,10 @@ namespace AssetDiscovery.Premise
                 IsSSL = true
             };
             iswinrm = winrmconn.IsConnectSuccessfull();
+            if (iswinrm)
+            {
+                minfo.OpenedPorts.Add("WINRM", winrmport);
+            }
             // last try TELNET
             ICommunication telnetconn = new TelnetCommunication()
             {
@@ -174,6 +186,10 @@ namespace AssetDiscovery.Premise
                 TargetCredentials = networkDeviceCredentials
             };
             istelnet = telnetconn.IsConnectSuccessfull();
+            if (istelnet)
+            {
+                minfo.OpenedPorts.Add("TELNET", telnetport);
+            }
             //Get OS Version
             //Get Hostname
             if (isrdp || iswinrm)
@@ -213,7 +229,7 @@ namespace AssetDiscovery.Premise
                     {
                         if (scr.Script == ScriptType.BASH)
                         {
-                            string result = winrmconn.RunCommand(scr.ScriptText);
+                            string result = sshconn.RunCommand(scr.ScriptText);
                             minfo.ScriptOutput.Add(scr.ScriptName, result);
                         }
                     }
