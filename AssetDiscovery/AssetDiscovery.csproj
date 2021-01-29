@@ -8,7 +8,7 @@
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
     <PackageReference Include="Microsoft.Powershell.SDK" Version="6.2.3" />
     <PackageReference Include="SSH.NET" Version="2016.1.0" />
-    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="log4net" Version="2.0.10" />
     <PackageReference Include="IPNetwork" Version="2.1.0" />
   </ItemGroup>
 
